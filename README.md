@@ -2,7 +2,7 @@
 
 Herramienta web que usa inteligencia artificial para generar contenido de venta optimizado para productos de eCommerce. Ingresás el nombre del producto, configurás algunos parámetros y obtenés título, descripción, tags SEO y call to action listos para publicar.
 
-**[→ Ver demo en vivo](https://kolobits.github.io/productai-ecommerce)**
+**[→ Ver demo en vivo](https://kolobits.github.io/productIA/)**
 
 ---
 

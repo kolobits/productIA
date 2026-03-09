@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProductAI — Generador de Contenido para eCommerce</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+ <canvas id="bgCanvas"></canvas>
+
+  <header>
+    <div class="logo">
+      <div class="logo-dot"></div>
+      ProductAI
+    </div>
+    <span class="badge">v1.0 · eCommerce Assistant</span>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="hero-tag">Generador con IA</p>
+      <h1>Contenido que<br/><span>vende más.</span></h1>
+      <p class="hero-sub">Generá títulos, descripciones y keywords SEO para tus productos en segundos. Impulsado por Claude AI.</p>
+    </section>
+
+    <div class="app-container">
+
+      <div class="api-section">
+        <label>API KEY (ANTHROPIC)</label>
+        <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off"/>
+        <p class="api-hint">
+          Tu key solo se usa en el momento, nunca se guarda.
+        </p>
+      </div>
+
+      <div class="form-card">
+        <div class="form-grid">
+          <div class="field full">
+            <label class="field-label">Nombre del producto *</label>
+            <input type="text" id="productName" placeholder="ej: Zapatillas Running Ultra Pro 2024"/>
+          </div>
+          <div class="field">
+            <label class="field-label">Categoría</label>
+            <select id="category">
+              <option value="">Seleccionar...</option>
+              <option>Ropa y Calzado</option>
+              <option>Electrónica</option>
+              <option>Hogar y Deco</option>
+              <option>Deportes</option>
+              <option>Belleza y Cuidado</option>
+              <option>Juguetes</option>
+              <option>Alimentos</option>
+              <option>Accesorios</option>
+              <option>Herramientas</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Precio estimado (USD)</label>
+            <input type="text" id="price" placeholder="ej: 49.99"/>
+          </div>
+          <div class="field full">
+            <label class="field-label">Características clave (opcional)</label>
+            <textarea id="features" placeholder="ej: suela antideslizante, talle 38-46, disponible en 3 colores..."></textarea>
+          </div>
+          <div class="field">
+            <label class="field-label">Plataforma de venta</label>
+            <select id="platform">
+              <option value="">Genérico</option>
+              <option>Mercado Libre</option>
+              <option>Tienda online propia</option>
+              <option>Redes Sociales</option>
+              <option>WooCommerce</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Tono</label>
+            <select id="tone">
+              <option value="profesional">Profesional</option>
+              <option value="cercano">Cercano y amigable</option>
+              <option value="premium">Premium/Lujoso</option>
+              <option value="urgente">Con urgencia</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn-generate" id="generateBtn" onclick="generate()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          Generar contenido
+        </button>
+      </div>
+
+      <div class="error-box" id="errorBox"></div>
+
+      <div class="loading" id="loading">
+        <div class="spinner-wrap">
+          <div class="spinner"></div>
+          <div class="spinner-inner"></div>
+        </div>
+        <p class="loading-text">Generando contenido<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></p>
+      </div>
+
+      <div class="results" id="results">
+        <div class="results-header">
+          <span class="results-title">✦ Resultado generado</span>
+          <button class="btn-copy-all" onclick="copyAll()">Copiar todo</button>
+        </div>
+
+        <div class="result-block" id="block-title">
+          <div class="result-block-header">
+            <span class="result-block-label"><span class="dot"></span>Título principal</span>
+            <button class="btn-copy" onclick="copyBlock('titleContent', this)">Copiar</button>
+          </div>
+          <div class="result-block-content" id="titleContent"></div>
+        </div>
+
+        <div class="result-block" id="block-desc">
+          <div class="result-block-header">
+            <span class="result-block-label"><span class="dot"></span>Descripción para listing</span>
+            <button class="btn-copy" onclick="copyBlock('descContent', this)">Copiar</button>
+          </div>
+          <div class="result-block-content" id="descContent"></div>
+        </div>
+
+        <div class="result-block" id="block-short">
+          <div class="result-block-header">
+            <span class="result-block-label"><span class="dot"></span>Descripción corta (redes)</span>
+            <button class="btn-copy" onclick="copyBlock('shortContent', this)">Copiar</button>
+          </div>
+          <div class="result-block-content" id="shortContent"></div>
+        </div>
+
+        <div class="result-block" id="block-tags">
+          <div class="result-block-header">
+            <span class="result-block-label"><span class="dot"></span>Keywords / Tags SEO</span>
+            <button class="btn-copy" onclick="copyBlock('tagsContent', this)">Copiar</button>
+          </div>
+          <div class="tags-list" id="tagsContent"></div>
+        </div>
+
+        <div class="result-block" id="block-cta">
+          <div class="result-block-header">
+            <span class="result-block-label"><span class="dot"></span>Call to action</span>
+            <button class="btn-copy" onclick="copyBlock('ctaContent', this)">Copiar</button>
+          </div>
+          <div class="result-block-content" id="ctaContent"></div>
+        </div>
+      </div>
+
+      <div class="accent-line"></div>
+    </div>
+  </main>
+
+  <footer>
+    Por <a href="https://github.com/kolobits" target="_blank">Camilo Pardo</a> · 2025
+  </footer>
+
+  <script src="script.js"></script>
+    
+</body>
+</html>
